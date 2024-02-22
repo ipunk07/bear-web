@@ -1,0 +1,32 @@
+version: "3.7"
+services:
+    app:
+        build:
+            args:
+                 user: chameleon
+                 uid: 1000
+            context: ./
+            dockerfile: Dockerfile
+        image: companyprofile:dev
+        container_name: chameleon-app
+        restart: unless-stopped
+        working_dir: /var/www/html/chameleon
+        volumes:
+            - ./app:/var/www/html/chameleon
+        networks:
+            - companyprofile
+    nginx:
+        image: nginx:alpine
+        container_name: chameleon-webserver
+        restart: unless-stopped
+        ports:
+            - 80:80
+        volumes:
+            - ./app:/var/www/html/chameleon
+            - ./docker/nginx:/etc/nginx/conf.d/
+        networks:
+            - companyprofile
+
+networks:
+    companyprofile:
+        driver: bridge
